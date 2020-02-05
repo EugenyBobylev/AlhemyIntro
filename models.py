@@ -1,6 +1,10 @@
+from typing import Dict
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Boolean, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+import json
+
 
 Base = declarative_base()
 
@@ -20,6 +24,23 @@ class Person(Base):
 
     def __repr__(self):
         return f'id={self.id}; name={self.name}; email={self.email}; phone={self.phone}'
+
+    def from_json(json_str) -> 'Person':
+        def parse(key: str):
+            if key in from_json:
+                return from_json[key]
+            else:
+                return None
+
+        from_json = json.loads(json_str)
+        person = Person()
+        person.id = parse('id')
+        person.name = parse('name')
+        person.email = parse('email')
+        person.phone = parse('phone')
+        person.is_customer = parse('is_customer')
+        person.is_performer = parse('is_performer')
+        return person
 
 
 class Order(Base):
