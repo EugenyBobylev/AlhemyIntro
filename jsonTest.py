@@ -1,32 +1,23 @@
-import json
-from models import Person, Order
-from sqlalchemy.ext.declarative import DeclarativeMeta
+from typing import List, Dict
+from models import Person, Order,str_to_dict
 
 
-class AlchemyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj.__class__, DeclarativeMeta):
-            # an SQLAlchemy class
-            fields = {}
-            for field in [x for x in dir(obj) if not x.startswith('_') and x != 'metadata']:
-                data = obj.__getattribute__(field)
-                try:
-                    json.dumps(data) # this will fail on non-encodable values, like other classes
-                    fields[field] = data
-                except TypeError:
-                    fields[field] = None
-            # a json-encodable dict
-            return fields
-        return json.JSONEncoder.default(self, obj)
+
+def print_all(mylist) -> None:
+    for item in mylist:
+        print(item)
 
 person = Person()
 person.name = "Ольга Охманюк"
 person.email = "ohmanyukov@mail.ru"
 person.phone = "+79246432292"
 person.is_customer = True
-json_str = json.dumps(person, cls=AlchemyEncoder)
-print(json_str)
 
-person2 = Person.from_json(json_str)
+str1 = "email=ohmanyukov@mail.ru;id=None; is_customer=True; is_performer=None; name=Ольга Охманюк; phone=+79246432292"
+result_dict = str_to_dict(str1)
+print(result_dict)
+
+person2 = Person.from_string(str1)
 print(person2)
+
 
